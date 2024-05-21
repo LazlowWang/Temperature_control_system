@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to My Temperature Controller</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-ajax-uploader/2.6.7/SimpleAjaxUploader.min.js">
+    <style>
+        h4 { color: blue; }
+        #current_temperature {
+      color: red; 
+        }
+        body 
+        {   
+            text-align: center;
+            padding-top: 12%; 
+            font-family: Arial, sans-serif; 
+        }
+
+        button {
+            width: 100px; 
+            padding: 10px; 
+            margin: 5px; 
+            font-size: 16px; 
+            cursor: pointer; 
+        }
+
+    </style>
+</head>
+
+<body>   
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <!--the flashed message--> 
+    <div class="header">    
+    <h1>Welcome to My Temperature Control Panel</h1> 
+    </div>
+    <h3>Current Temperature: <span id="current_temperature"></span>°C</h3>
+    <h4>Current date and time: <span id="datetime"></span></h4>
+        <form method="POST">
+        <button type="submit" name="mode" value="auto">Auto</button>
+        <button type="submit" name="mode" value="manual">Manual</button>
+        </form> 
+</body>
+      <script>
+    function UpdateDateTime()  
+        {
+            const now = new Date();
+            const currentDateTime = now.toLocaleString();
+            document.querySelector('#datetime').textContent = currentDateTime;
+        }
+
+    function UpdateTemperature() <!--update the current temperature on html page--> 
+        {
+    fetch('/real_time_current_temperature')           
+    .then(response => response.json())
+    .then(data => { document.getElementById("current_temperature").textContent = data.current_temperature; });           
+        }
+        
+        setInterval(UpdateDateTime, 1000); 
+        setInterval(UpdateTemperature, 500); 
+        UpdateDateTime(); 
+        UpdateTemperature();
+    </script>
+    
+</html>

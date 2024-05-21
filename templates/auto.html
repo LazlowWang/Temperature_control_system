@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto Mode</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-ajax-uploader/2.6.7/SimpleAjaxUploader.min.js">
+    <style>
+        h1 { color: red; }
+        h4 { color: blue; }
+       #current_temperature {
+      color: red; 
+        }
+        body {
+            text-align: center; 
+            padding-top: 10%; 
+            font-family: Arial, sans-serif;
+        }
+        button {
+            width: 100px; 
+            padding: 15px; 
+            margin: 20px 20px; 
+            font-size: 18px; 
+            cursor:pointer; 
+        }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    
+    <div class="header"> 
+    <h1>Auto Mode</h1>
+    </div>
+    
+    <h3>Current Temperature: <span id="current_temperature"></span>°C</h3>
+    
+    <h4>Current Date and Time: <span id="datetime"></span></h4>
+    
+    <form method="POST" action="/auto">
+    <button type="submit" name="action" value="start">Start</button>
+    </form>
+    <form method="POST" action="/">
+    <button type="submit" name="action" value="home">Home</button>
+    </form>
+
+    <script>
+    function UpdateDateTime() 
+        {
+            const now = new Date();
+            const currentDateTime = now.toLocaleString();
+            document.querySelector('#datetime').textContent = currentDateTime;
+        }
+
+    function UpdateTemperature() 
+        {
+    fetch('/real_time_current_temperature')           
+    .then(response => response.json())
+    .then(data => { document.getElementById("current_temperature").textContent = data.current_temperature; });           
+        }
+        
+        setInterval(UpdateDateTime, 1000); 
+        setInterval(UpdateTemperature, 500); 
+        UpdateDateTime(); 
+        UpdateTemperature();
+    </script>
+</body>
+</html>
